@@ -55,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.android.architecture.blueprints.todoapp.BuildConfig
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.TodoTheme
 import com.example.android.architecture.blueprints.todoapp.data.Task
@@ -91,6 +92,17 @@ fun TasksScreen(
         floatingActionButton = {
             SmallFloatingActionButton(onClick = onAddTask) {
                 Icon(Icons.Filled.Add, stringResource(id = R.string.add_task))
+            }
+        },
+        bottomBar = {
+            Surface(tonalElevation = 2.dp) {
+                Text(
+                    text = stringResource(R.string.demo_build_label, BuildConfig.VERSION_NAME),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
         }
     ) { paddingValues ->
