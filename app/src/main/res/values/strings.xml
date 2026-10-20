@@ -16,7 +16,7 @@
 -->
 <resources>
     <string name="app_name">Applivery Demo</string>
-    <string name="demo_build_label">Applivery demo build %1$s</string>
+    <string name="demo_build_label">Applivery demo build %1$s — automatic update test</string>
     <string name="add_task">New Task</string>
     <string name="edit_task">Edit Task</string>
     <string name="task_details">Task Details</string>
