@@ -43,8 +43,23 @@ android {
         }
     }
 
+    val signingStorePath = System.getenv("ANDROID_KEYSTORE_PATH")
+    if (signingStorePath != null) {
+        signingConfigs {
+            create("githubActions") {
+                storeFile = file(signingStorePath)
+                storePassword = requireNotNull(System.getenv("ANDROID_KEYSTORE_PASSWORD"))
+                keyAlias = requireNotNull(System.getenv("ANDROID_KEY_ALIAS"))
+                keyPassword = requireNotNull(System.getenv("ANDROID_KEY_PASSWORD"))
+            }
+        }
+    }
+
     buildTypes {
         getByName("debug") {
+            signingStorePath?.let {
+                signingConfig = signingConfigs.getByName("githubActions")
+            }
             isMinifyEnabled = false
             isTestCoverageEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")

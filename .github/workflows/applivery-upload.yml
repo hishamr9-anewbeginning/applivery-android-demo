@@ -30,8 +30,18 @@ jobs:
           java-version: "17"
           cache: gradle
 
+      - name: Prepare Android signing key
+        run: printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/applivery-demo-release.jks"
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+
       - name: Build test APK
         run: ./gradlew :app:assembleDebug
+        env:
+          ANDROID_KEYSTORE_PATH: ${{ runner.temp }}/applivery-demo-release.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: applivery-demo
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
 
       - name: Upload APK to Applivery
         run: |
