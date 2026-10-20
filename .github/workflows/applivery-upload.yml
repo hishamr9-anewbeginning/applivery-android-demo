@@ -1,0 +1,52 @@
+name: Build and upload to Applivery
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "app/**"
+      - "gradle/**"
+      - "gradlew"
+      - "gradlew.bat"
+      - ".github/workflows/applivery-upload.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Build test APK
+        run: ./gradlew :app:assembleDebug
+
+      - name: Upload APK to Applivery
+        run: |
+          curl "https://upload.applivery.io/v1/integrations/builds" \
+            --retry 5 \
+            --fail \
+            -H "Authorization: Bearer ${{ secrets.APPLIVERY_TOKEN }}" \
+            -F "build=@app/build/outputs/apk/debug/app-debug.apk" \
+            -F "versionName=Demo ${{ github.run_number }}" \
+            -F "changelog=Automated demo build from GitHub Actions" \
+            -F "tags=github-actions, demo, ${{ github.ref_name }}" \
+            -F "notifyCollaborators=false" \
+            -F "deployer.name=GitHub Actions" \
+            -F "deployer.info.commit=${{ github.sha }}" \
+            -F "deployer.info.branch=${{ github.ref_name }}" \
+            -F "deployer.info.buildUrl=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            -F "deployer.info.buildNumber=${{ github.run_number }}" \
+            -F "deployer.info.repositoryUrl=${{ github.server_url }}/${{ github.repository }}"

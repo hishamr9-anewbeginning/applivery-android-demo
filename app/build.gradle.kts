@@ -30,8 +30,9 @@ android {
         applicationId = "com.example.android.architecture.blueprints.main"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "1.0"
+        val ciBuildNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull()
+        versionCode = ciBuildNumber ?: 1
+        versionName = ciBuildNumber?.let { "1.0.$it" } ?: "1.0"
 
         testInstrumentationRunner = "com.example.android.architecture.blueprints.todoapp.CustomTestRunner"
 
